@@ -25,6 +25,16 @@ module.exports = {
       .then(ids => this.findById(ids[0]));
   },
 
+  addStep(step, id) {
+    const stepsData = {
+      scheme_id: id,
+      ...step
+    };
+    return db('steps')
+      .insert(stepsData)
+      .then(id => ({ ...stepsData, id: id[0] }));
+  },
+
   update(id, changes) {
     return db('schemes')
       .where({ id })

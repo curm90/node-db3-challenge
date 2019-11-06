@@ -41,7 +41,6 @@ router.get('/:id/steps', validateSchemeId, async (req, res) => {
   }
 });
 
-// WIP
 router.post('/', validateScheme, async (req, res) => {
   try {
     const { scheme_name } = req.body;
@@ -57,11 +56,10 @@ router.post('/:id/steps', async (req, res) => {
     const stepData = req.body;
     const { id } = req.params;
 
-    const newStep = await Schemes.findById(id);
-    if (newStep) {
-      Schemes.addStep(stepData, id).then(step => {
-        res.status(201).json(step);
-      });
+    const scheme = await Schemes.findById(id);
+    if (scheme) {
+      const newStep = await Schemes.addStep(stepData, id);
+      res.status(201).json(newStep);
     } else {
       res.status(404).json({ message: 'Could not find scheme with given id.' });
     }
