@@ -1,29 +1,40 @@
 const db = require('../data/db.config');
 
 module.exports = {
-  find: () => db('schemes'),
+  find() {
+    return db('schemes');
+  },
 
-  findById: id =>
-    db('schemes')
+  findById(id) {
+    return db('schemes')
       .where({ id })
-      .first(),
+      .first();
+  },
 
-  findSteps: id =>
-    db('steps as s')
+  findSteps(id) {
+    return db('steps as s')
       .join('schemes as sch', 'sch.id', 's.scheme_id')
       .select('sch.scheme_name', 's.step_number', 's.instructions')
       .where({ 'sch.id': id })
-      .orderBy('s.step_number', 'asc'),
+      .orderBy('s.step_number', 'asc');
+  },
 
-  add: scheme => db('schemes').insert(scheme),
+  add(scheme) {
+    return db('schemes')
+      .insert(scheme)
+      .then(ids => this.findById(ids[0]));
+  },
 
-  update: (id, changes) =>
-    db('schemes')
+  update(id, changes) {
+    return db('schemes')
       .where({ id })
-      .update(changes),
+      .update(changes)
+      .then(id => (id > 0 ? this.findById(id) : null));
+  },
 
-  remove: id =>
-    db('schemes')
+  remove(id) {
+    return db('schemes')
       .where('id', id)
-      .del()
+      .del();
+  }
 };
